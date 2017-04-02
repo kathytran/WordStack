@@ -54,13 +54,12 @@ public class MainActivity extends AppCompatActivity {
             InputStream inputStream = assetManager.open("words.txt");
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
             String line = null;
+            //reads the words from the file and stores them in the words ArrayList
             while((line = in.readLine()) != null) {
                 String word = line.trim();
-                /**
-                 **
-                 **  YOUR CODE GOES HERE
-                 **
-                 **/
+                if (word.length() == WORD_LENGTH) {
+                    words.add(word);
+                }
             }
         } catch (IOException e) {
             Toast toast = Toast.makeText(this, "Could not load dictionary", Toast.LENGTH_LONG);
@@ -140,14 +139,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean onStartGame(View view) {
+    public boolean onStartGame(View view) {
         TextView messageBox = (TextView) findViewById(R.id.message_box);
         messageBox.setText("Game started");
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
+        word1 = words.get(random.nextInt(words.size()));
+        word2 = words.get(random.nextInt(words.size()));
+        int counter1 = WORD_LENGTH;
+        int counter2 = WORD_LENGTH;
+        String string = "";
+        //randomly picks 2 words from words
+        //shuffles the letters of the words while preserving word order
+        while (counter1 > 0 && counter2 > 0) {
+            if (random.nextInt(2) == 1) {
+                string += word1.charAt(WORD_LENGTH - counter1--);
+            } else {
+                string += word2.charAt(WORD_LENGTH - counter2--);
+            }
+        }
+        if (counter1 > 0) {
+            string += word1.substring(WORD_LENGTH - counter1);
+        }
+        else if (counter2 > 0) {
+            string += word2.substring(WORD_LENGTH - counter2);
+        }
+        messageBox.setText(string);
+
+        for (int i = string.length() - 1; i >= 0; i--) {
+            LetterTile tile = new LetterTile(view.getContext(), string.charAt(i));
+            stackedLayout.push(tile);
+        }
         return true;
     }
 
